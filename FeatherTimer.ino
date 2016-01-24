@@ -5,6 +5,7 @@
 #include <string.h>
 #include <SPI.h>
 #include <Wire.h>
+#include <RTCZero.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
@@ -37,11 +38,13 @@ const int BLUEFRUIT_SPI_CS = 8;
 const int BLUEFRUIT_SPI_IRQ = 7;
 const int BLUEFRUIT_SPI_RST = 4;
 
+// Create objects for all the hardware.
 Adafruit_SSD1306 display(OLED_RESET);
 Adafruit_BMP280 bme;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(NUMPIXELS, NEO, NEO_GRB + NEO_KHZ800);
 Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B);
 Adafruit_BluefruitLE_SPI ble(BLUEFRUIT_SPI_CS, BLUEFRUIT_SPI_IRQ, BLUEFRUIT_SPI_RST);
+RTCZero rtc;
 
 void setup() {
   // Initialize the button pins
@@ -91,6 +94,11 @@ void setup() {
 
   delay(1000);
   bno.setExtCrystalUse(true);
+
+  // Initialize RTC
+  rtc.begin();
+  // Jan 1, 2016 by default.
+  rtc.setEpoch(1451606400);
 
   // Show that initialization is finished.
   for (int i=0; i<6; i++) {
