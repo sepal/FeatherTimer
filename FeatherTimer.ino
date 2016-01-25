@@ -19,6 +19,7 @@
 #include "Adafruit_BluefruitLE_UART.h"
 
 #include "Button.h"
+#include "AppState.h"
 
 // Menu variables
 MenuSystem MenuSystem;
@@ -27,6 +28,8 @@ MenuItem MenuItemTime("Time");
 MenuItem MenuItemTimer("Timer");
 
 Button button;
+
+AppStateManager stateManager;
 
 // Facatory reset
 #define FACTORYRESET_ENABLE 1
