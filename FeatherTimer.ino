@@ -18,11 +18,15 @@
 #include "Adafruit_BluefruitLE_SPI.h"
 #include "Adafruit_BluefruitLE_UART.h"
 
+#include "Button.h"
+
 // Menu variables
 MenuSystem MenuSystem;
 Menu MenuRoot("Root");
 MenuItem MenuItemTime("Time");
 MenuItem MenuItemTimer("Timer");
+
+Button button;
 
 // Facatory reset
 #define FACTORYRESET_ENABLE 1
@@ -34,9 +38,6 @@ MenuItem MenuItemTimer("Timer");
 #define VERBOSE_MODE        true
 
 // Pin definitions
-const int BTN_UP = 9;
-const int BTN_MID = 6;
-const int BTN_DOWN = 5;
 const int TONE = 11;
 const int NEO = 12;
 const int BATTERY = A7;
@@ -55,15 +56,22 @@ RTCZero rtc;
 
 void setup() {
   // Initialize the button pins
-  pinMode(BTN_UP, INPUT_PULLUP);
-  pinMode(BTN_MID, INPUT_PULLUP);
-  pinMode(BTN_DOWN, INPUT_PULLUP);
+  button.begin();
+  button.setPressed(&on_pressed);
+
+
 
   // Initialize the NeoPixels and turn them off.
   strip.begin();
   strip.show();
   // Lower the brightness, since the timer runs on a battery.
   strip.setBrightness(50);
+
+  // Init and clear the display.
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.setTextColor(WHITE);
+  display.clearDisplay();
+  display.display();
 
   // Initialize the BMP280
   if (!bme.begin()) {
@@ -96,8 +104,6 @@ void setup() {
   // Disable command echo from Bluefruit
   ble.echo(false);
 
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
-  display.setTextColor(WHITE);
 
   delay(1000);
   bno.setExtCrystalUse(true);
@@ -120,10 +126,10 @@ void setup() {
     delay(100);
   }
 
-    MenuRoot.add_item(&MenuItemTime, &on_menu_time);
-    MenuRoot.add_item(&MenuItemTimer, &on_menu_timer);
-    MenuSystem.set_root_menu(&MenuRoot);
-    displayMenu();
+  MenuRoot.add_item(&MenuItemTime, &on_menu_time);
+  MenuRoot.add_item(&MenuItemTimer, &on_menu_timer);
+  MenuSystem.set_root_menu(&MenuRoot);
+  displayMenu();
 }
 
 int btn_up_lstate = HIGH;
@@ -133,43 +139,23 @@ int btn_down_lstate = HIGH;
 long time_start_mid = 0;
 
 void loop() {
-  int btn_up_state = digitalRead(BTN_UP);
-  int btn_mid_state = digitalRead(BTN_MID);
-  int btn_down_state = digitalRead(BTN_DOWN);
+  button.update();
+}
 
-  if (btn_up_lstate != btn_up_state) {
-    if (btn_up_state == LOW) {
+void on_pressed(uint8_t button) {
+  Serial.println(button);
+  switch (button) {
+    case Button::UP:
       MenuSystem.next();
       displayMenu();
-      btn_up_lstate = btn_up_state;
-    } else if (btn_up_state == HIGH) {
-
-      btn_up_lstate = btn_up_state;
-    }
-  }
-
-  if (btn_mid_lstate != btn_mid_state) {
-    if (btn_mid_state == LOW) {
+      break;
+    case Button::MID:
       MenuSystem.select();
-      btn_mid_lstate = btn_mid_state;
-      time_start_mid = millis();
-    } else if (btn_mid_state == HIGH) {
-      if (millis() - time_start_mid > 1000) {
-        MenuSystem.back();
-      }
-      btn_mid_lstate = btn_mid_state;
-    }
-  }
-
-  if (btn_down_lstate != btn_down_state) {
-    if (btn_down_state == LOW) {
+      break;
+    case Button::DOWN:
       MenuSystem.prev();
-      displayMenu();
-      btn_down_lstate = btn_down_state;
-    } else if (btn_down_state == HIGH) {
-
-      btn_down_lstate = btn_down_state;
-    }
+        displayMenu();
+      break;
   }
 }
 
