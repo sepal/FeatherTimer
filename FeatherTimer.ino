@@ -6,6 +6,7 @@
 #include <SPI.h>
 #include <Wire.h>
 #include <RTCZero.h>
+#include <MenuSystem.h>
 #include <Adafruit_Sensor.h>
 #include <Adafruit_BNO055.h>
 #include <utility/imumaths.h>
@@ -16,6 +17,12 @@
 #include "Adafruit_BLE.h"
 #include "Adafruit_BluefruitLE_SPI.h"
 #include "Adafruit_BluefruitLE_UART.h"
+
+// Menu variables
+MenuSystem MenuSystem;
+Menu MenuRoot("Root");
+MenuItem MenuItemTime("Time");
+MenuItem MenuItemTimer("Timer");
 
 // Facatory reset
 #define FACTORYRESET_ENABLE 1
@@ -112,8 +119,88 @@ void setup() {
     strip.show();
     delay(100);
   }
+
+    MenuRoot.add_item(&MenuItemTime, &on_menu_time);
+    MenuRoot.add_item(&MenuItemTimer, &on_menu_timer);
+    MenuSystem.set_root_menu(&MenuRoot);
+    displayMenu();
 }
 
-void loop() {
+int btn_up_lstate = HIGH;
+int btn_mid_lstate = HIGH;
+int btn_down_lstate = HIGH;
 
+long time_start_mid = 0;
+
+void loop() {
+  int btn_up_state = digitalRead(BTN_UP);
+  int btn_mid_state = digitalRead(BTN_MID);
+  int btn_down_state = digitalRead(BTN_DOWN);
+
+  if (btn_up_lstate != btn_up_state) {
+    if (btn_up_state == LOW) {
+      MenuSystem.next();
+      displayMenu();
+      btn_up_lstate = btn_up_state;
+    } else if (btn_up_state == HIGH) {
+
+      btn_up_lstate = btn_up_state;
+    }
+  }
+
+  if (btn_mid_lstate != btn_mid_state) {
+    if (btn_mid_state == LOW) {
+      MenuSystem.select();
+      btn_mid_lstate = btn_mid_state;
+      time_start_mid = millis();
+    } else if (btn_mid_state == HIGH) {
+      if (millis() - time_start_mid > 1000) {
+        MenuSystem.back();
+      }
+      btn_mid_lstate = btn_mid_state;
+    }
+  }
+
+  if (btn_down_lstate != btn_down_state) {
+    if (btn_down_state == LOW) {
+      MenuSystem.prev();
+      displayMenu();
+      btn_down_lstate = btn_down_state;
+    } else if (btn_down_state == HIGH) {
+
+      btn_down_lstate = btn_down_state;
+    }
+  }
+}
+
+void displayMenu() {
+  display.clearDisplay();
+  display.setCursor(0, 0);
+  display.setTextColor(WHITE);
+  display.setTextSize(1);
+
+  Menu const* cp_menu = MenuSystem.get_current_menu();
+
+  display.println(cp_menu->get_name());
+  display.println(cp_menu->get_selected()->get_name());
+
+  display.display();
+}
+
+void on_menu_time(MenuItem* p_menu_item) {
+  display.clearDisplay();
+  display.setCursor(0, 2);
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.print("TimeMenu");
+  display.display();
+}
+
+void on_menu_timer(MenuItem* p_menu_item) {
+  display.clearDisplay();
+  display.setCursor(0, 2);
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.print("TimerMenu");
+  display.display();
 }
