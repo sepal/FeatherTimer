@@ -1,9 +1,9 @@
 
 #include "AppState.h"
 
-AppState::AppState()
+AppState::AppState(Adafruit_SSD1306 *display)
 {
-
+  this->display = display;
 }
 
 AppStateManager::AppStateManager()

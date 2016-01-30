@@ -2,10 +2,11 @@
 #define _APP_STATE_
 
 #include "Arduino.h"
+#include <Adafruit_SSD1306.h>
 
 class AppState {
 public:
-  AppState();
+  AppState(Adafruit_SSD1306 *display);
 
   /**
    * Update logic and display.
@@ -22,6 +23,7 @@ public:
    */
   virtual void released(uint8_t) = 0;
 protected:
+  Adafruit_SSD1306 *display;
 };
 
 class AppStateManager {
