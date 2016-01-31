@@ -15,7 +15,7 @@
 #include <Adafruit_NeoPixel.h>
 
 #include "Button.h"
-#include "AppState.h"
+#include "App.h"
 
 // Number of NeoPixels
 #define NUMPIXELS           6
@@ -35,7 +35,7 @@ Adafruit_BNO055 bno = Adafruit_BNO055(55, BNO055_ADDRESS_B);
 RTCZero rtc;
 
 Button button;
-AppStateManager stateManager;
+AppManager stateManager;
 
 void setup() {
   // Initialize the button pins

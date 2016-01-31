@@ -9,12 +9,12 @@ public:
   App(Adafruit_SSD1306 *display);
 
   /**
-   *
+   * Invoked after switching to this app.
    */
   virtual void onEnter() = 0;
 
   /**
-   *
+   * Invoked before switching to another app.
    */
   virtual void onExit() = 0;
 
