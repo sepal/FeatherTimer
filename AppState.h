@@ -14,14 +14,10 @@ public:
   virtual void update() = 0;
 
   /**
-   * Button pressed.
+   * A button was pressed.
    */
   virtual void pressed(uint8_t) = 0;
 
-  /**
-   * Button released.
-   */
-  virtual void released(uint8_t) = 0;
 protected:
   Adafruit_SSD1306 *display;
 };
