@@ -9,6 +9,16 @@ public:
   App(Adafruit_SSD1306 *display);
 
   /**
+   *
+   */
+  virtual void onEnter() = 0;
+
+  /**
+   *
+   */
+  virtual void onExit() = 0;
+
+  /**
    * Update logic and display.
    */
   virtual void update() = 0;
@@ -41,10 +51,10 @@ public:
     */
    App* getCurrentApp();
 private:
-  App* currentState;
+  App* currentApp;
   App** states;
   uint8_t numStates;
-  uint8_t currentStateNum;
+  uint8_t currentAppNum;
 };
 
 #endif //_APP_STATE_

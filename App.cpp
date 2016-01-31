@@ -7,9 +7,9 @@ App::App(Adafruit_SSD1306 *display)
 }
 
 AppManager::AppManager()
-  : currentState(NULL),
+  : currentApp(NULL),
     numStates(0),
-    currentStateNum(0)
+    currentAppNum(0)
 {
 }
 
@@ -27,7 +27,7 @@ void AppManager::addApp(App* newState)
 
   // If its the first state to be added, set it as the current state.
   if (numStates == 0)
-    currentState = newState;
+    currentApp = newState;
 
   // Increate the number of states counter.
   numStates++;
@@ -35,10 +35,16 @@ void AppManager::addApp(App* newState)
 
 void AppManager::setApp(int index)
 {
-  currentState = states[index];
-  currentStateNum = index;
+  if (currentApp != NULL)
+    currentApp->onExit();
+
+  currentApp = states[index];
+  currentAppNum = index;
+
+  if (currentApp != NULL)
+    currentApp->onEnter();
 }
 
 App* AppManager::getCurrentApp() {
-  return currentState;
+  return currentApp;
 }
