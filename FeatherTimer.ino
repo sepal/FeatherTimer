@@ -14,9 +14,11 @@
 #include <Adafruit_BMP280.h>
 #include <Adafruit_NeoPixel.h>
 
+#include "TimeType.h"
 #include "Button.h"
 #include "App.h"
-
+//#include "TimerApp.h"
+TimeType t;
 // Number of NeoPixels
 #define NUMPIXELS           6
 // Reset the OLED
@@ -66,7 +68,6 @@ void setup() {
     Serial.print("Ooops, no BNO055 detected ... Check your wiring or I2C ADDR!");
     while(1);
   }
-
 
   delay(1000);
   bno.setExtCrystalUse(true);

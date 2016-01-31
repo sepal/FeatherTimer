@@ -3,6 +3,7 @@
 
 #include "Arduino.h"
 #include <Adafruit_SSD1306.h>
+#include "Button.h"
 
 class App {
 public:
