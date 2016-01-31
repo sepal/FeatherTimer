@@ -1,22 +1,22 @@
 
-#include "AppState.h"
+#include "App.h"
 
-AppState::AppState(Adafruit_SSD1306 *display)
+App::App(Adafruit_SSD1306 *display)
 {
   this->display = display;
 }
 
-AppStateManager::AppStateManager()
+AppManager::AppManager()
   : currentState(NULL),
     numStates(0),
     currentStateNum(0)
 {
 }
 
-void AppStateManager::addAppState(AppState* newState)
+void AppManager::addApp(App* newState)
 {
   // Increase the states size so we can add the new state.
-  states = (AppState**) realloc(states, (numStates + 1) * sizeof(AppState*));
+  states = (App**) realloc(states, (numStates + 1) * sizeof(App*));
 
   // Return if something went wrong.
   if (states == NULL)
@@ -33,12 +33,12 @@ void AppStateManager::addAppState(AppState* newState)
   numStates++;
 }
 
-void AppStateManager::setAppState(int index)
+void AppManager::setApp(int index)
 {
   currentState = states[index];
   currentStateNum = index;
 }
 
-AppState* AppStateManager::getCurrentAppState() {
+App* AppManager::getCurrentApp() {
   return currentState;
 }

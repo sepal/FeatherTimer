@@ -4,9 +4,9 @@
 #include "Arduino.h"
 #include <Adafruit_SSD1306.h>
 
-class AppState {
+class App {
 public:
-  AppState(Adafruit_SSD1306 *display);
+  App(Adafruit_SSD1306 *display);
 
   /**
    * Update logic and display.
@@ -22,27 +22,27 @@ protected:
   Adafruit_SSD1306 *display;
 };
 
-class AppStateManager {
+class AppManager {
 public:
-  AppStateManager();
+  AppManager();
 
   /**
-   * Add an AppState.
+   * Add an App.
    */
-  void addAppState(AppState*);
+  void addApp(App*);
 
   /**
    * Set the current state.
    */
-   void setAppState(int index);
+   void setApp(int index);
 
    /**
-    * Returns a pointer to the current AppState.
+    * Returns a pointer to the current App.
     */
-   AppState* getCurrentAppState();
+   App* getCurrentApp();
 private:
-  AppState* currentState;
-  AppState** states;
+  App* currentState;
+  App** states;
   uint8_t numStates;
   uint8_t currentStateNum;
 };
